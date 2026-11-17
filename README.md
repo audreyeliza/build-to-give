@@ -10,6 +10,21 @@ port opens while the Arduino reboots and reruns its self-driven FOC
 calibration (see `CustomHapticDevice::calibrate`) — start with the handle
 at your intended home/center position before launching.
 
+That boot position is also where the device returns when you let go: once
+the handle has sat still away from home (by more than `settling_err`, default
+0.5 mm) for `return_delay` seconds (default 2.5), it's pulled back with a
+spring (`k_return`, default 150 N/m, damping `k_dampen` N*s/m, default 2, capped at 2 N)
+until it has stayed within `settling_err` of home for 0.3 s.
+Moving the handle away from home cancels the return. All four are tunable
+live from the launcher or the IPC server.
+
+You can also drive the handle from the mouse: left-click and drag the
+current (handle-controlled) atom, and the atom follows the mouse's X while
+the handle is servoed to match, using the same `k_return`/`k_dampen` spring
+(you'll feel it pulling the handle, and can resist it). Only X is locked,
+since the device has a single axis. Releasing the mouse hands control back to
+the handle, and return-to-home resumes as usual.
+
 For hardware assembly/wiring, see [docs/HARDWARE.md](docs/HARDWARE.md); for
 Windows/WSL setup, see [Windows/WSL Setup](#windowswsl-setup-first-time-on-a-new-machine); for project
 background and semester write-ups, see [docs/journal.md](docs/journal.md).
@@ -607,3 +622,4 @@ haptic shaft itself is keyboard-driven:
         * reset camera
     * `CTRL`
         * toggle help panel
+# build-to-give
